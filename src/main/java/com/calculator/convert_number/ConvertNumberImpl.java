@@ -1,6 +1,5 @@
 package com.calculator.convert_number;
 
-import com.calculator.Main;
 import com.calculator.RomanNumeral;
 
 public class ConvertNumberImpl implements ConvertNumber {
@@ -16,7 +15,6 @@ public class ConvertNumberImpl implements ConvertNumber {
 
 
     public String convertArabicNumberToRomanNumber(String arabicNumber) {
-        //TODO написать логику преобразования числа из арабского в римское
         int num = Integer.parseInt(arabicNumber);
         StringBuilder builder = new StringBuilder();
 
@@ -52,6 +50,7 @@ public class ConvertNumberImpl implements ConvertNumber {
                     }
                 }
                 builder.append(romanNumeral);
+                assert romanNumeral != null;
                 num -= romanNumeral.getArabicNumeral();
             }
             if (num == 0) {

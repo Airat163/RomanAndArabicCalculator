@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Main {
     private static final ConvertNumberImpl CONVERT_NUMBER = ConvertNumberImpl.getInstance();
-    private static final Parser PARSER = Parser.getInstance();
+    private static final ParserImpl PARSER_IMPL = ParserImpl.getInstance();
 
 
     //получить строку от пользователя из консоли
@@ -18,7 +18,7 @@ public class Main {
 
     //достать из строки 2 числа и положить в массив
     private static String[] getArrayOfNumbers(String input, boolean isArabicNumerals) {
-        return PARSER.parseStringAndReturnAnArrayOfNumbers(input, isArabicNumerals);
+        return PARSER_IMPL.parseStringAndReturnAnArrayOfNumbers(input, isArabicNumerals);
     }
 
     //проверить какой знак ввел пользователь
@@ -42,12 +42,13 @@ public class Main {
     //провести математическую операцию и вернуть результат в зависимости от системы счисления
     private static String calculateNumbers(String[] values, MathSymbol mathSymbol, boolean isArabicNumbers) {
         CalculatorImpl calculator = CalculatorImpl.valueOf(String.valueOf(mathSymbol));
-        String resultArabicNumber = String.valueOf(calculator.mathOperation(Integer.parseInt(values[0]), Integer.parseInt(values[1])));
+        String resultArabicNumber = String.valueOf(calculator.calculate(Integer.parseInt(values[0]), Integer.parseInt(values[1])));
         if (!isArabicNumbers) {
             return CONVERT_NUMBER.convertArabicNumberToRomanNumber(resultArabicNumber);
         }
         return resultArabicNumber;
     }
+
     public static String calc(String input) {
         String[] inputValues = input.split(" ");
         boolean isArabicNumerals = isArabicNumerals(inputValues[0]);
