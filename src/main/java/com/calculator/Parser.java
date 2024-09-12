@@ -4,6 +4,7 @@ import com.calculator.convert_number.ConvertNumberImpl;
 
 public class Parser {
     private static final Parser INSTANCE = new Parser();
+    private final ConvertNumberImpl convertNumber = ConvertNumberImpl.getInstance();
 
     private Parser() {
     }
@@ -12,13 +13,13 @@ public class Parser {
         return INSTANCE;
     }
 
-    public String[] parseStringAndReturnAnArrayOfNumbers(String input) {
-        String[] strings = input.split(" ");
-        boolean arabicNumerals = new Main().isArabicNumerals(input);
-        if (arabicNumerals) {
-            return new String[]{strings[0], strings[2]};
+    public String[] parseStringAndReturnAnArrayOfNumbers(String input, boolean isArabicNumerals) {
+        String[] values = input.split(" ");
+        if (isArabicNumerals) {
+            return new String[]{values[0], values[2]};
+        } else {
+            String[] arabicNumbers = convertNumber.convertRomanNumberToArabicNumber(values);
+            return new String[]{arabicNumbers[0], arabicNumbers[1]};
         }
-        String[] strings1 = ConvertNumberImpl.getInstance().convertRomanNumberToArabicNumber(strings);
-        return new String[]{strings1[0], strings1[1]};
     }
 }

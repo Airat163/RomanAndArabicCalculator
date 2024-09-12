@@ -3,8 +3,7 @@ package com.calculator.convert_number;
 import com.calculator.Main;
 import com.calculator.RomanNumeral;
 
-public class ConvertNumberImpl {
-    private RomanNumeral romanNumeral;
+public class ConvertNumberImpl implements ConvertNumber {
 
     private static final ConvertNumberImpl INSTANCE = new ConvertNumberImpl();
 
@@ -46,15 +45,14 @@ public class ConvertNumberImpl {
             }
             if (num < 10 && num > 0) {
                 RomanNumeral[] values = RomanNumeral.values();
-                RomanNumeral romanNumeral1 = null;
+                RomanNumeral romanNumeral = null;
                 for (RomanNumeral numeral : values) {
                     if (numeral.getArabicNumeral() == num) {
-                        romanNumeral1 = numeral;
+                        romanNumeral = numeral;
                     }
                 }
-
-                builder.append(romanNumeral1);
-                num -= romanNumeral1.getArabicNumeral();
+                builder.append(romanNumeral);
+                num -= romanNumeral.getArabicNumeral();
             }
             if (num == 0) {
                 return builder.toString();
@@ -62,32 +60,21 @@ public class ConvertNumberImpl {
         }
     }
 
-    public String[] convertRomanNumberToArabicNumber(String[] romanNumbers) {
-        //TODO написать логику преобразования числа из римского в арабское
-        RomanNumeral romanNumeral1 = null;
-        RomanNumeral romanNumeral2 = null;
-        RomanNumeral[] values = RomanNumeral.values();
-        boolean arabicNumerals = new Main().isArabicNumerals(romanNumbers[0]);
-        //TODO придумать что делать с римскими цифрами
-        if (!arabicNumerals) {
-            for (RomanNumeral numeral : values) {
-                if (numeral == RomanNumeral.valueOf(romanNumbers[0]) && romanNumeral1 == null) {
-                    romanNumeral1 = numeral;
-                }
-                if (numeral == RomanNumeral.valueOf(romanNumbers[romanNumbers.length - 1]) && romanNumeral2 == null) {
-                    romanNumeral2 = numeral;
-                }
+    public String[] convertRomanNumberToArabicNumber(String[] arrayValues) {
+        RomanNumeral romNum = null;
+        RomanNumeral romNum2 = null;
+        RomanNumeral[] romanNumerals = RomanNumeral.values();
+        for (RomanNumeral roman : romanNumerals) {
+            if (romNum != null && romNum2 != null) {
+                return new String[]{String.valueOf(romNum.getArabicNumeral()), String.valueOf(romNum2.getArabicNumeral())};
             }
-            return new String[]{String.valueOf(romanNumeral1.getArabicNumeral()), String.valueOf(romanNumeral2.getArabicNumeral())};
-        }
-        for (RomanNumeral numeral : values) {
-            if (numeral.getArabicNumeral() == Integer.parseInt(romanNumbers[0])) {
-                romanNumeral1 = numeral;
+            if (roman == RomanNumeral.valueOf(arrayValues[0])) {
+                romNum = roman;
             }
-            if (numeral.getArabicNumeral() == Integer.parseInt(romanNumbers[romanNumbers.length-1])) {
-                romanNumeral2 = numeral;
+            if (roman == RomanNumeral.valueOf(arrayValues[arrayValues.length - 1]) && romNum2 == null) {
+                romNum2 = roman;
             }
         }
-        return new String[]{String.valueOf(romanNumeral1.getArabicNumeral()), String.valueOf(romanNumeral2.getArabicNumeral())};
+        throw new IllegalArgumentException();
     }
 }

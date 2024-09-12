@@ -1,8 +1,8 @@
 package com.calculator.convert_number;
 
 public interface ConvertNumber {
-    int convertArabicNumberToRomanNumber(int arabicNumber);
+    String convertArabicNumberToRomanNumber(String arabicNumber);
 
-    int convertRomanNumberToArabicNumber(int romanNumber);
+    String[] convertRomanNumberToArabicNumber(String[] romanNumbers);
 
 }

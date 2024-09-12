@@ -5,31 +5,28 @@ import com.calculator.convert_number.ConvertNumberImpl;
 import java.util.Scanner;
 
 public class Main {
-    private final ConvertNumberImpl convertNumber = ConvertNumberImpl.getInstance();
-    private final Parser parser = Parser.getInstance();
+    private static final ConvertNumberImpl CONVERT_NUMBER = ConvertNumberImpl.getInstance();
+    private static final Parser PARSER = Parser.getInstance();
 
 
     //получить строку от пользователя из консоли
     public String enteringDataIntoTheConsole() {
-        Scanner scanner = new Scanner(System.in);
-        String inputData = scanner.nextLine();
-        scanner.close();
-        return inputData;
+        try (Scanner scanner = new Scanner(System.in)) {
+            return scanner.nextLine();
+        }
     }
 
-    //преобразовать строку чисел в массив чисел
-    private String[] getArrayOfNumbers(String inputData) {
-        return parser.parseStringAndReturnAnArrayOfNumbers(inputData);
+    //достать из строки 2 числа и положить в массив
+    private static String[] getArrayOfNumbers(String input, boolean isArabicNumerals) {
+        return PARSER.parseStringAndReturnAnArrayOfNumbers(input, isArabicNumerals);
     }
 
     //проверить какой знак ввел пользователь
-    private MathSymbol checkWhichCharacterTheUserEntered(String inputData) {
-        //TODO создать Енам MathSymbol который будет содержать константы математеческих знаков
-        // написать логику проверки знака и вернуть енам
-        String[] strings = inputData.split(" ");
-        MathSymbol[] values = MathSymbol.values();
-        for (MathSymbol symbol : values) {
-            if (symbol.getSymbol().equals(strings[1])) {
+    private static MathSymbol checkWhichCharacterTheUserEntered(String input) {
+        String[] inputSymbols = input.split(" ");
+        MathSymbol[] mathSymbols = MathSymbol.values();
+        for (MathSymbol symbol : mathSymbols) {
+            if (symbol.getSymbol().equals(inputSymbols[1])) {
                 return symbol;
             }
         }
@@ -37,46 +34,30 @@ public class Main {
     }
 
     //проверить какие числа ввел пользователь римские или арабские
-    public boolean isArabicNumerals(String inputData) {
-        //TODO написать логику проверки строки, если это римские числа то вернуть true, иначе false;
+    public static boolean isArabicNumerals(String inputData) {
         String[] strings = inputData.split(" ");
         return Character.isDigit((strings[0].charAt(0)));
     }
 
-    //провести математическую операцию и вернуть результат для арабских чисел
-    private String calculateArabicNumbers(String[] input, MathSymbol mathSymbol) {
-        //TODO написать логику подсчета исходя из знака
-        CalculatorImpl calculator1 = CalculatorImpl.valueOf(String.valueOf(mathSymbol));
-        return String.valueOf(calculator1.mathOperation(Integer.parseInt(input[0]), Integer.parseInt(input[1])));
-    }
-
-    //провести математическую операцию и вернуть результат для римских чисел
-    private String calculateRomanNumbers(String[] input, MathSymbol mathSymbol) {
-        //TODO сначала перевести их в арабские числа с помощью класса ConvertNumberImpl,
-        // посчитать и перевести результат в римское число, также с помощью класса ConvertNumberImpl
-        // и вернуть результат в виде строки.
-        String[] arabic = convertNumber.convertRomanNumberToArabicNumber(input);
-        String resultArabicNumber = calculateArabicNumbers(arabic, mathSymbol);
-        return convertNumber.convertArabicNumberToRomanNumber(resultArabicNumber);
-    }
-
-    //TODO написать метод который будет вызывать по цепочке нужные методы и выдавать результат пользователю
-    public String calc(String input) {
-        String[] arrayOfNumbers = getArrayOfNumbers(input);
-        String[] sp = input.split(" ");
-        MathSymbol mathSymbol = checkWhichCharacterTheUserEntered(input);
-        boolean arabicNumerals = isArabicNumerals(sp[0]);
-        if (arabicNumerals) {
-            return calculateArabicNumbers(arrayOfNumbers, mathSymbol);
-        } else {
-            return calculateRomanNumbers(arrayOfNumbers, mathSymbol);
+    //провести математическую операцию и вернуть результат в зависимости от системы счисления
+    private static String calculateNumbers(String[] values, MathSymbol mathSymbol, boolean isArabicNumbers) {
+        CalculatorImpl calculator = CalculatorImpl.valueOf(String.valueOf(mathSymbol));
+        String resultArabicNumber = String.valueOf(calculator.mathOperation(Integer.parseInt(values[0]), Integer.parseInt(values[1])));
+        if (!isArabicNumbers) {
+            return CONVERT_NUMBER.convertArabicNumberToRomanNumber(resultArabicNumber);
         }
+        return resultArabicNumber;
+    }
+    public static String calc(String input) {
+        String[] inputValues = input.split(" ");
+        boolean isArabicNumerals = isArabicNumerals(inputValues[0]);
+        String[] arrayOfNumbers = getArrayOfNumbers(input, isArabicNumerals);
+        MathSymbol mathSymbol = checkWhichCharacterTheUserEntered(input);
+        return calculateNumbers(arrayOfNumbers, mathSymbol, isArabicNumerals);
     }
 
     public static void main(String[] args) {
-        Main main = new Main();
-        String input = main.enteringDataIntoTheConsole();
-        String result = new Main().calc(input);
-        System.out.println(result);
+        String input = new Main().enteringDataIntoTheConsole();
+        System.out.println(calc(input));
     }
 }
